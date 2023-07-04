@@ -42,7 +42,7 @@ func (l *NodeLogic) Node(in *pb.NodeReq) (*pb.NodeResp, error) {
 	rand.Seed(time.Now().UnixNano())
 	index := rand.Intn(len(connections))
 	connection := connections[index]
-	response, err := WsManager.SendRequest(connection, in, time.Second*5)
+	response, err := WsManager.SendRequest(connection, in, time.Second*20)
 	if err != nil {
 		return &pb.NodeResp{
 			AppId:   in.AppId,
