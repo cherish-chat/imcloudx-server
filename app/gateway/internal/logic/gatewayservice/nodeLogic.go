@@ -27,6 +27,7 @@ func NewNodeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *NodeLogic {
 
 func (l *NodeLogic) Node(in *pb.NodeReq) (*pb.NodeResp, error) {
 	// TODO 获取所有pod中的connection
+	logx.Infof("node request: %+v", in)
 	connections, ok := WsManager.wsConnectionMap.GetByAppId(in.AppId)
 	if !ok || len(connections) == 0 {
 		return &pb.NodeResp{

@@ -17,19 +17,14 @@ func NewOfferHandler(svcCtx *svc.ServiceContext) *OfferHandler {
 }
 
 type OfferReq struct {
-	AppId string     `json:"appId" form:"appId"`
-	Sdp   string     `json:"sdp" form:"sdp"`
-	Type  pb.SDPType `json:"type" form:"type"`
-}
-
-type Answer struct {
-	Sdp  string     `json:"sdp" form:"sdp"`
-	Type pb.SDPType `json:"type" form:"type"`
+	AppId string     `json:"appId" form:"appId" binding:"required"`
+	Sdp   string     `json:"sdp" form:"sdp" binding:"required"`
+	Type  pb.SDPType `json:"type" form:"type" binding:"required"`
 }
 
 func (h *OfferHandler) Offer(ctx *gin.Context) {
 	var req OfferReq
-	if err := ctx.ShouldBind(&req); err != nil {
+	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(200, gin.H{
 			"code": 1,
 			"msg":  err.Error(),
@@ -56,7 +51,7 @@ func (h *OfferHandler) Offer(ctx *gin.Context) {
 		})
 		return
 	}
-	answer := &Answer{}
+	answer := &pb.SessionDescription{}
 	if err := utils.Json.Unmarshal(nodeResp.Body, answer); err != nil {
 		ctx.JSON(200, gin.H{
 			"code": 1,

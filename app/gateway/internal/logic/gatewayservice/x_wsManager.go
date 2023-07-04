@@ -5,6 +5,8 @@ import (
 	"errors"
 	"github.com/cherish-chat/imcloudx-server/app/gateway/internal/svc"
 	"github.com/cherish-chat/imcloudx-server/common/pb"
+	"github.com/zeromicro/go-zero/core/logx"
+	"google.golang.org/protobuf/proto"
 	"nhooyr.io/websocket"
 	"sync"
 	"time"
@@ -224,7 +226,22 @@ func (w *wsManager) AddSubscriber(ctx context.Context, appId string, connection 
 	return wsConnection, nil
 }
 
+func (w *wsManager) WriteData(wsConnection *WsConnection, data []byte) bool {
+	err := wsConnection.Connection.Write(wsConnection.Ctx, websocket.MessageBinary, data)
+	if err != nil {
+		logx.Debugf("WriteData error:%v, %s", wsConnection.AppId, err.Error())
+		return false
+	}
+	return true
+}
+
 func (w *wsManager) SendRequest(connection *WsConnection, in *pb.NodeReq, timeout time.Duration) (*pb.NodeResp, error) {
+	data, _ := proto.Marshal(in)
+	data, _ = proto.Marshal(&pb.WsReceiveMessageBinary{
+		Type: pb.WsReceiveMessageBinaryType_ReceiveRequest,
+		Data: data,
+	})
+	go w.WriteData(connection, data)
 	response, err := w.wsConnectionMap.waitResponse(in.RequestId, timeout)
 	if err != nil {
 		return nil, err

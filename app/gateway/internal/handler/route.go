@@ -18,5 +18,6 @@ func SetupRoutes(svcCtx *svc.ServiceContext, engine *gin.Engine) {
 	{
 		offerHandler := offerhandler.NewOfferHandler(svcCtx)
 		engine.GET("/offer", offerHandler.Offer)
+		engine.POST("/offer", offerHandler.Offer)
 	}
 }
