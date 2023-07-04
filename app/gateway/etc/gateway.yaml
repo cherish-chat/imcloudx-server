@@ -1,0 +1,71 @@
+Name: "gateway.cloudx.rpc"
+ListenOn: "127.0.0.1:12301"
+Mode: dev
+
+Log:
+  Level: "debug"
+
+Telemetry:
+  Name: "gateway.cloudx.rpc"
+  Batcher: "jaeger"
+  Sampler: 1.0
+  Endpoint: "http://172.88.10.33:14268/api/traces"
+
+Http:
+  Host: "0.0.0.0"
+  Port: 12300
+  Cors:
+    Enable: false
+    AllowOrigins:
+      - "*"
+    AllowMethods:
+      - "GET"
+      - "POST"
+      - "PUT"
+      - "DELETE"
+      - "OPTIONS"
+    AllowHeaders:
+      - "Authorization"
+      - "Content-Type"
+      - "X-User-Id"
+    ExposeHeaders:
+      - "Content-Length"
+      - "Access-Control-Allow-Origin"
+      - "Access-Control-Allow-Headers"
+      - "Cache-Control"
+      - "Content-Language"
+      - "Content-Type"
+      - "Expires"
+      - "Last-Modified"
+      - "Pragma"
+      - "Set-Cookie"
+      - "X-User-Id"
+    AllowCredentials: true
+  ApiLog:
+    Apis:
+      - "POST /api/v1/gateway/getUserConnection"
+
+Etcd:
+  Hosts:
+    - "172.88.10.11:2379"
+  Key: "gateway.cloudx.rpc"
+
+RedisConf:
+  Host: "172.88.10.22:6379"
+  Type: "node"
+  Pass: "123456"
+  Tls: false
+  NonBlock: true
+
+RpcClientConf:
+  App:
+    Etcd:
+      Hosts:
+        - "172.88.10.11:2379"
+      Key: "app.cloudx.rpc"
+    NonBlock: true # 非阻塞模式
+    Timeout: 10000 # rpc 超时时间 单位毫秒
+
+Websocket:
+  KeepAliveTickerSecond: 30
+  KeepAliveSecond: 60

@@ -1,0 +1,39 @@
+syntax = "proto3";
+package pb;
+option go_package = "./pb";
+
+// SDPType describes the type of an SessionDescription.
+enum SDPType {
+  SDPTypeUnkown = 0;
+  // SDPTypeOffer indicates that a description MUST be treated as an SDP
+  // offer.
+  SDPTypeOffer = 1;
+  // SDPTypePranswer indicates that a description MUST be treated as an
+  // SDP answer, but not a final answer. A description used as an SDP
+  // pranswer may be applied as a response to an SDP offer, or an update to
+  // a previously sent SDP pranswer.
+  SDPTypePranswer = 2;
+  // SDPTypeAnswer indicates that a description MUST be treated as an SDP
+  // final answer, and the offer-answer exchange MUST be considered complete.
+  // A description used as an SDP answer may be applied as a response to an
+  // SDP offer or as an update to a previously sent SDP pranswer.
+  SDPTypeAnswer = 3;
+  // SDPTypeRollback indicates that a description MUST be treated as
+  // canceling the current SDP negotiation and moving the SDP offer and
+  // answer back to what it was in the previous stable state. Note the
+  // local or remote SDP descriptions in the previous stable state could be
+  // null if there has not yet been a successful offer-answer negotiation.
+  SDPTypeRollback = 4;
+}
+
+//WebsocketCustomCloseCode websocket关闭码
+//You can define custom codes in the 3000-4999 range.
+//The 3000-3999 range is reserved for use by libraries, frameworks and applications.
+//The 4000-4999 range is reserved for private use.
+enum WebsocketCustomCloseCode {
+  CloseCodeZero = 0; // pb必须有一个默认值
+  CloseCodeAuthenticationFailed = 4001; // 认证失败
+  CloseCodeDuplicateConnection = 4002; // 重复连接
+  CloseCodeServerInternalError = 4003; // 服务器内部错误
+  CloseCodeHeartbeatTimeout = 4004; // 心跳超时
+}

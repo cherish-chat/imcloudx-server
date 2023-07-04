@@ -1,0 +1,19 @@
+syntax = "proto3";
+package pb;
+option go_package = "./pb";
+import "common.proto";
+
+message VerifyClientReq {
+  string clientId = 1;
+  string clientSecret = 2;
+}
+
+message VerifyClientResp {
+  bool ok = 1;
+  string tip = 2;
+  string appId = 3;
+}
+
+service appService {
+  rpc VerifyClient(VerifyClientReq) returns (VerifyClientResp);
+}

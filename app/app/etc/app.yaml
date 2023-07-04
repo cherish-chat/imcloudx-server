@@ -1,0 +1,8 @@
+Name: "app.cloudx.rpc"
+ListenOn: "127.0.0.1:12302"
+Mode: dev
+
+Etcd:
+  Hosts:
+    - "172.88.10.11:2379"
+  Key: "app.cloudx.rpc"
