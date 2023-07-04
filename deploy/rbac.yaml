@@ -1,0 +1,38 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: imcloudx-find-endpoints
+rules:
+  - apiGroups: [""]
+    resources: ["endpoints"]
+    verbs: ["get", "list", "watch"]
+
+---
+# serviceAccount
+# 名称 find-endpoints 要求拥有find-endpoints权限的serviceAccount
+# 记得更换namespace
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: imcloudx-find-endpoints
+  namespace: imcloudx
+---
+# serviceAccount
+# 名称 find-endpoints 要求拥有find-endpoints权限的serviceAccount
+# 记得更换namespace
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: imcloudx-find-endpoints
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: imcloudx-find-endpoints
+subjects:
+  - kind: ServiceAccount
+    name: imcloudx-find-endpoints
+    namespace: imcloudx
+---

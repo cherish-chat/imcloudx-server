@@ -1,12 +1,14 @@
 package svc
 
-import "github.com/cherish-chat/imcloudx-server/app/app/internal/config"
+import (
+	"github.com/cherish-chat/imcloudx-server/common/xconf"
+)
 
 type ServiceContext struct {
-	Config config.Config
+	Config xconf.Config
 }
 
-func NewServiceContext(c config.Config) *ServiceContext {
+func NewServiceContext(c xconf.Config) *ServiceContext {
 	return &ServiceContext{
 		Config: c,
 	}

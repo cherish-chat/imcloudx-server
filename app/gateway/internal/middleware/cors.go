@@ -9,12 +9,12 @@ import (
 )
 
 func Cors(svcCtx *svc.ServiceContext) gin.HandlerFunc {
-	if !svcCtx.Config.Http.Cors.Enable {
+	if !svcCtx.Config.Gateway.Http.Cors.Enable {
 		return func(c *gin.Context) {
 			c.Next()
 		}
 	} else {
-		config := svcCtx.Config.Http.Cors
+		config := svcCtx.Config.Gateway.Http.Cors
 		return func(c *gin.Context) {
 			method := c.Request.Method
 			c.Header("Access-Control-Allow-Origin", strings.Join(config.AllowOrigins, ","))

@@ -1,0 +1,66 @@
+
+Mode: dev
+
+Log:
+  Level: "debug"
+
+
+Discovery: # 服务注册和发现配置
+  Etcd: # etcd
+    KeyPrefix: "cloudx."
+    Hosts:
+      - "172.88.10.11:2379"
+  K8sNamespace: "default" # k8s命名空间 只有在 etcd 未配置时有效
+
+
+Telemetry:
+  Batcher: "jaeger"
+  Sampler: 1.0
+  Endpoint: "http://172.88.10.33:14268/api/traces"
+
+App:
+  Port: 12302
+  Timeout: 15000
+
+
+Gateway:
+  Port: 12301
+  Timeout: 15000
+
+  Http:
+    Host: "0.0.0.0"
+    Port: 12300
+    Cors:
+      Enable: false
+      AllowOrigins:
+        - "*"
+      AllowMethods:
+        - "GET"
+        - "POST"
+        - "PUT"
+        - "DELETE"
+        - "OPTIONS"
+      AllowHeaders:
+        - "Authorization"
+        - "Content-Type"
+        - "X-User-Id"
+      ExposeHeaders:
+        - "Content-Length"
+        - "Access-Control-Allow-Origin"
+        - "Access-Control-Allow-Headers"
+        - "Cache-Control"
+        - "Content-Language"
+        - "Content-Type"
+        - "Expires"
+        - "Last-Modified"
+        - "Pragma"
+        - "Set-Cookie"
+        - "X-User-Id"
+      AllowCredentials: true
+    ApiLog:
+      Apis:
+        - "POST /api/v1/gateway/getUserConnection"
+
+  Websocket:
+    KeepAliveTickerSecond: 30
+    KeepAliveSecond: 60

@@ -1,0 +1,213 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway
+  namespace: imcloudx
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: gateway
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: gateway
+      name: gateway
+      namespace: imcloudx
+    spec:
+      containers:
+        - env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: NODE_IP
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: status.hostIP
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: status.podIP
+          image: registry.cn-shanghai.aliyuncs.com/xxim-dev/imcloudx-gateway:latest
+          imagePullPolicy: Always
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - sh
+                  - -c
+                  - sleep 5
+          livenessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            successThreshold: 1
+            tcpSocket:
+              port: 12300
+            timeoutSeconds: 1
+          name: gateway
+          ports:
+            - containerPort: 12300
+              protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 3
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: 12300
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "1"
+              memory: 2Gi
+          securityContext:
+            privileged: false
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+            - mountPath: /etc/localtime
+              name: timezone
+            - mountPath: /app/etc/config.yaml
+              name: config
+              subPath: config.yaml
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: imcloudx-find-endpoints
+      serviceAccountName: imcloudx-find-endpoints
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
+            type: ""
+          name: timezone
+        - configMap:
+            defaultMode: 420
+            name: config
+          name: config
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+  namespace: imcloudx
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: app
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: app
+      name: app
+      namespace: imcloudx
+    spec:
+      containers:
+        - env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: NODE_IP
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: status.hostIP
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: status.podIP
+          image: registry.cn-shanghai.aliyuncs.com/xxim-dev/imcloudx-app:latest
+          imagePullPolicy: Always
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - sh
+                  - -c
+                  - sleep 5
+          livenessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            successThreshold: 1
+            tcpSocket:
+              port: 12302
+            timeoutSeconds: 1
+          name: app
+          ports:
+            - containerPort: 12302
+              protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 3
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: 12302
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "1"
+              memory: 2Gi
+          securityContext:
+            privileged: false
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+            - mountPath: /etc/localtime
+              name: timezone
+            - mountPath: /app/etc/config.yaml
+              name: config
+              subPath: config.yaml
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: imcloudx-find-endpoints
+      serviceAccountName: imcloudx-find-endpoints
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
+            type: ""
+          name: timezone
+        - configMap:
+            defaultMode: 420
+            name: config
+          name: config
+---

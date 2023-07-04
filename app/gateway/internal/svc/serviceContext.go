@@ -2,20 +2,18 @@ package svc
 
 import (
 	"github.com/cherish-chat/imcloudx-server/app/app/client/appservice"
-	"github.com/cherish-chat/imcloudx-server/app/gateway/internal/config"
-	"github.com/zeromicro/go-zero/zrpc"
+	"github.com/cherish-chat/imcloudx-server/common/xconf"
 )
 
 type ServiceContext struct {
-	Config     config.Config
+	Config     xconf.Config
 	AppService appservice.AppService
 }
 
-func NewServiceContext(c config.Config) *ServiceContext {
-	appClient := zrpc.MustNewClient(c.RpcClientConf.App)
+func NewServiceContext(c xconf.Config) *ServiceContext {
 	s := &ServiceContext{
 		Config:     c,
-		AppService: appservice.NewAppService(appClient),
+		AppService: c.NewAppRpc(),
 	}
 	return s
 }

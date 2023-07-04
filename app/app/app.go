@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/cherish-chat/imcloudx-server/common/xconf"
 
-	"github.com/cherish-chat/imcloudx-server/app/app/internal/config"
 	appserviceServer "github.com/cherish-chat/imcloudx-server/app/app/internal/server/appservice"
 	"github.com/cherish-chat/imcloudx-server/app/app/internal/svc"
 	"github.com/cherish-chat/imcloudx-server/common/pb"
@@ -16,16 +16,16 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
-var configFile = flag.String("f", "etc/app.yaml", "the config file")
+var configFile = flag.String("f", "etc/config.yaml", "the config file")
 
 func main() {
 	flag.Parse()
 
-	var c config.Config
+	var c xconf.Config
 	conf.MustLoad(*configFile, &c)
 	ctx := svc.NewServiceContext(c)
-
-	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
+	serverConf := c.AppRpcServerConf()
+	s := zrpc.MustNewServer(serverConf, func(grpcServer *grpc.Server) {
 		pb.RegisterAppServiceServer(grpcServer, appserviceServer.NewAppServiceServer(ctx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
@@ -34,6 +34,6 @@ func main() {
 	})
 	defer s.Stop()
 
-	fmt.Printf("Starting rpc server at %s...\n", c.ListenOn)
+	fmt.Printf("Starting rpc server at %s...\n", serverConf.ListenOn)
 	s.Start()
 }

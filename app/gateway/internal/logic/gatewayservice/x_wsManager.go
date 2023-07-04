@@ -132,7 +132,7 @@ func InitWsManager(svcCtx *svc.ServiceContext) {
 
 func (w *wsManager) loopCheck() {
 	go func() {
-		ticker := time.NewTicker(time.Second * time.Duration(w.svcCtx.Config.Websocket.KeepAliveTickerSecond))
+		ticker := time.NewTicker(time.Second * time.Duration(w.svcCtx.Config.Gateway.Websocket.KeepAliveTickerSecond))
 		defer ticker.Stop()
 		for {
 			select {
@@ -168,7 +168,7 @@ func (w *wsManager) RemoveSubscriber(appId string, id int64, closeCode websocket
 
 // clearConnectionTimer 定时器清除连接
 func (w *wsManager) clearConnectionTimer(connection *WsConnection) {
-	ticker := time.NewTicker(time.Second * time.Duration(w.svcCtx.Config.Websocket.KeepAliveTickerSecond))
+	ticker := time.NewTicker(time.Second * time.Duration(w.svcCtx.Config.Gateway.Websocket.KeepAliveTickerSecond))
 	defer ticker.Stop()
 	for {
 		select {
@@ -176,7 +176,7 @@ func (w *wsManager) clearConnectionTimer(connection *WsConnection) {
 			//使用 id 查询连接最后活跃时间
 			aliveTime, ok := w.wsConnectionMap.GetAliveTime(connection.Id)
 			sub := time.Now().Sub(aliveTime)
-			if !ok || sub > time.Second*time.Duration(w.svcCtx.Config.Websocket.KeepAliveSecond) {
+			if !ok || sub > time.Second*time.Duration(w.svcCtx.Config.Gateway.Websocket.KeepAliveSecond) {
 				// 删除连接
 				w.RemoveSubscriber(connection.AppId, connection.Id, websocket.StatusCode(pb.WebsocketCustomCloseCode_CloseCodeHeartbeatTimeout), "heartbeat timeout")
 				return

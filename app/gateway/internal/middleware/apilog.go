@@ -14,14 +14,14 @@ import (
 )
 
 func ApiLog(svcCtx *svc.ServiceContext) gin.HandlerFunc {
-	if len(svcCtx.Config.Http.ApiLog.Apis) == 0 {
+	if len(svcCtx.Config.Gateway.Http.ApiLog.Apis) == 0 {
 		return func(c *gin.Context) {
 			c.Next()
 		}
 	} else {
 		return func(c *gin.Context) {
 			matched := false
-			for _, api := range svcCtx.Config.Http.ApiLog.Apis {
+			for _, api := range svcCtx.Config.Gateway.Http.ApiLog.Apis {
 				// 格式: GET r'^/api/v1/user/.*' 表示所有以 /api/v1/user/ 开头的 GET 请求都会被记录
 				// 取出 Method 和 PathRegex
 				apiSplit := strings.Split(api, " ")

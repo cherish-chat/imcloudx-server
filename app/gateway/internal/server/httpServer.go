@@ -45,7 +45,7 @@ type HttpServer struct {
 }
 
 func (s *HttpServer) Start() {
-	listenOn := fmt.Sprintf("%s:%d", s.svcCtx.Config.Http.Host, s.svcCtx.Config.Http.Port)
+	listenOn := fmt.Sprintf("%s:%d", s.svcCtx.Config.Gateway.Http.Host, s.svcCtx.Config.Gateway.Http.Port)
 	logx.Infof("http server start at %s", listenOn)
 	err := s.ginEngine.Run(listenOn)
 	if err != nil {
