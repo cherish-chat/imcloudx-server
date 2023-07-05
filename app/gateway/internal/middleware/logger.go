@@ -97,6 +97,12 @@ func LoggerWithConfig(conf LoggerConfig) gin.HandlerFunc {
 		start := time.Now()
 		path := c.Request.URL.Path
 		raw := c.Request.URL.RawQuery
+		method := c.Request.Method
+		if method == http.MethodHead {
+			// 不记录HEAD请求
+			c.Next()
+			return
+		}
 
 		// Process request
 		c.Next()
